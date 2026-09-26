@@ -64,21 +64,30 @@ async function findTmdbMatch(show) {
   if (results.length === 0) return null;
 
   const yearOf = (r) => (r.first_air_date ? Number(r.first_air_date.slice(0, 4)) : null);
-  const yearMatches = (r) => {
-    const year = yearOf(r);
-    return year !== null && Math.abs(year - show.yearStart) <= 1;
-  };
   const titleMatches = (r) => r.name.trim().toLowerCase() === query.trim().toLowerCase();
 
-  // Prefer an exact title match over a loose year-proximity match - a popular
-  // same-era show with a similar title (e.g. "2 Broke Girls" vs "Girls") can
-  // otherwise outrank the actual show since search results are popularity-sorted.
-  return (
-    results.find((r) => titleMatches(r) && yearMatches(r)) ??
-    results.find((r) => titleMatches(r)) ??
-    results.find((r) => yearMatches(r)) ??
-    results[0]
-  );
+  // Rank candidates by (1) exact title match, then (2) closest first-air-date to
+  // our yearStart, keeping TMDb's own popularity order as the final tiebreak.
+  // A plain "first candidate within +/-1 year" pick is a trap: TMDb's results are
+  // popularity-sorted, not year-sorted, so a same-era spinoff or lookalike (e.g.
+  // "Junior Bake Off" vs "The Great British Bake Off", or "2 Broke Girls" vs
+  // "Girls") can rank ahead of - and be one year closer than - the real show.
+  const ranked = results
+    .map((r, index) => ({
+      r,
+      index,
+      exactTitle: titleMatches(r),
+      yearDiff: yearOf(r) === null ? Infinity : Math.abs(yearOf(r) - show.yearStart),
+    }))
+    .sort((a, b) => {
+      if (a.exactTitle !== b.exactTitle) return a.exactTitle ? -1 : 1;
+      if (a.yearDiff !== b.yearDiff) return a.yearDiff - b.yearDiff;
+      return a.index - b.index;
+    });
+
+  const best = ranked[0];
+  if (best.exactTitle || best.yearDiff <= 1) return best.r;
+  return results[0];
 }
 
 function mapProviderList(list) {
