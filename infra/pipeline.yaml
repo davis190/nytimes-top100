@@ -1,0 +1,196 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: NYT Top 100 - CodePipeline/CodeBuild (bootstrap once manually, then self-service on every push to main)
+
+Parameters:
+  GitHubConnectionArn:
+    Type: String
+    Default: arn:aws:codeconnections:us-east-1:619428404587:connection/c45b41a2-bc67-4389-99c2-af62261e64c3
+  RepositoryId:
+    Type: String
+    Default: davis190/nytimes-top100
+  BranchName:
+    Type: String
+    Default: main
+  AppStackName:
+    Type: String
+    Default: nyt100-app
+  CertificateArn:
+    Type: String
+    Default: arn:aws:acm:us-east-1:619428404587:certificate/0405ff68-5a1a-4194-8b15-7f60ef92d1b2
+  GoogleSecretName:
+    Type: String
+    Default: nyt100/google-oauth
+  WebsiteDomain1:
+    Type: String
+    Default: nytimes-top100.claytondavis.dev
+  WebsiteDomain2:
+    Type: String
+    Default: nyt100.claytondavis.dev
+  ApiDomain:
+    Type: String
+    Default: api.nyt100.claytondavis.dev
+  AuthDomain:
+    Type: String
+    Default: auth.nyt100.claytondavis.dev
+
+Resources:
+  ArtifactBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "nyt100-pipeline-artifacts-${AWS::AccountId}"
+      VersioningConfiguration:
+        Status: Enabled
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+  CodeBuildServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: { Service: codebuild.amazonaws.com }
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        # Broad on purpose: this role deploys/updates the whole app stack (Cognito, DynamoDB,
+        # API Gateway, Lambda, CloudFront, IAM roles for the Lambda) via `sam deploy`. Personal
+        # single-account project - fine to tighten later if this is ever shared infra.
+        - arn:aws:iam::aws:policy/AdministratorAccess
+
+  CodePipelineServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: { Service: codepipeline.amazonaws.com }
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: pipeline-access
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:GetObjectVersion
+                  - s3:PutObject
+                  - s3:GetBucketVersioning
+                Resource:
+                  - !GetAtt ArtifactBucket.Arn
+                  - !Sub "${ArtifactBucket.Arn}/*"
+              - Effect: Allow
+                Action: codestar-connections:UseConnection
+                Resource: !Ref GitHubConnectionArn
+              - Effect: Allow
+                Action:
+                  - codebuild:StartBuild
+                  - codebuild:BatchGetBuilds
+                Resource:
+                  - !GetAtt BackendBuildProject.Arn
+                  - !GetAtt FrontendBuildProject.Arn
+
+  BackendBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: nyt100-deploy-backend
+      ServiceRole: !GetAtt CodeBuildServiceRole.Arn
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        Type: LINUX_CONTAINER
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/standard:7.0
+        EnvironmentVariables:
+          - { Name: APP_STACK_NAME, Value: !Ref AppStackName }
+          - { Name: CERTIFICATE_ARN, Value: !Ref CertificateArn }
+          - { Name: GOOGLE_SECRET_NAME, Value: !Ref GoogleSecretName }
+          - { Name: WEBSITE_DOMAIN_1, Value: !Ref WebsiteDomain1 }
+          - { Name: WEBSITE_DOMAIN_2, Value: !Ref WebsiteDomain2 }
+          - { Name: API_DOMAIN, Value: !Ref ApiDomain }
+          - { Name: AUTH_DOMAIN, Value: !Ref AuthDomain }
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: buildspec-backend.yml
+
+  FrontendBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: nyt100-deploy-frontend
+      ServiceRole: !GetAtt CodeBuildServiceRole.Arn
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        Type: LINUX_CONTAINER
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/standard:7.0
+        EnvironmentVariables:
+          - { Name: APP_STACK_NAME, Value: !Ref AppStackName }
+          - { Name: API_DOMAIN, Value: !Ref ApiDomain }
+          - { Name: AUTH_DOMAIN, Value: !Ref AuthDomain }
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: buildspec-frontend.yml
+
+  Pipeline:
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      Name: nyt100-pipeline
+      RoleArn: !GetAtt CodePipelineServiceRole.Arn
+      ArtifactStore:
+        Type: S3
+        Location: !Ref ArtifactBucket
+      Stages:
+        - Name: Source
+          Actions:
+            - Name: GitHubSource
+              ActionTypeId:
+                Category: Source
+                Owner: AWS
+                Provider: CodeStarSourceConnection
+                Version: "1"
+              Configuration:
+                ConnectionArn: !Ref GitHubConnectionArn
+                FullRepositoryId: !Ref RepositoryId
+                BranchName: !Ref BranchName
+              OutputArtifacts:
+                - Name: SourceOutput
+        - Name: DeployBackend
+          Actions:
+            - Name: BackendBuildDeploy
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: "1"
+              Configuration:
+                ProjectName: !Ref BackendBuildProject
+              InputArtifacts:
+                - Name: SourceOutput
+              OutputArtifacts:
+                - Name: BackendOutput
+        - Name: DeployFrontend
+          Actions:
+            - Name: FrontendBuildDeploy
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: "1"
+              Configuration:
+                ProjectName: !Ref FrontendBuildProject
+              InputArtifacts:
+                - Name: SourceOutput
+              OutputArtifacts:
+                - Name: FrontendOutput
+
+Outputs:
+  PipelineName:
+    Value: !Ref Pipeline
+  ArtifactBucketName:
+    Value: !Ref ArtifactBucket

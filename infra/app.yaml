@@ -1,0 +1,332 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: NYT Top 100 - app stack (Cognito, DynamoDB, API, frontend hosting)
+
+Parameters:
+  CertificateArn:
+    Type: String
+    Description: ACM certificate (us-east-1) covering the website, API, and auth domains
+  GoogleSecretName:
+    Type: String
+    Default: nyt100/google-oauth
+    Description: Secrets Manager secret name holding {client_id, client_secret} for Google OAuth
+  WebsiteDomain1:
+    Type: String
+    Default: nytimes-top100.claytondavis.dev
+  WebsiteDomain2:
+    Type: String
+    Default: nyt100.claytondavis.dev
+  ApiDomain:
+    Type: String
+    Default: api.nyt100.claytondavis.dev
+  AuthDomain:
+    Type: String
+    Default: auth.nyt100.claytondavis.dev
+
+Resources:
+  ShowsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+        - AttributeName: GSI1PK
+          AttributeType: S
+        - AttributeName: GSI1SK
+          AttributeType: N
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: GSI1
+          KeySchema:
+            - AttributeName: GSI1PK
+              KeyType: HASH
+            - AttributeName: GSI1SK
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+
+  UserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: nyt100-users
+      UsernameAttributes:
+        - email
+      AutoVerifiedAttributes:
+        - email
+      Schema:
+        - Name: email
+          Required: true
+          Mutable: true
+        - Name: name
+          Required: false
+          Mutable: true
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireLowercase: true
+          RequireNumbers: true
+          RequireSymbols: false
+          RequireUppercase: true
+
+  GoogleIdentityProvider:
+    Type: AWS::Cognito::UserPoolIdentityProvider
+    Properties:
+      UserPoolId: !Ref UserPool
+      ProviderName: Google
+      ProviderType: Google
+      ProviderDetails:
+        client_id: !Sub "{{resolve:secretsmanager:${GoogleSecretName}:SecretString:client_id}}"
+        client_secret: !Sub "{{resolve:secretsmanager:${GoogleSecretName}:SecretString:client_secret}}"
+        authorize_scopes: "profile email openid"
+      AttributeMapping:
+        email: email
+        name: name
+        username: sub
+
+  UserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    DependsOn: GoogleIdentityProvider
+    Properties:
+      UserPoolId: !Ref UserPool
+      GenerateSecret: false
+      AllowedOAuthFlows:
+        - code
+      AllowedOAuthScopes:
+        - openid
+        - email
+        - profile
+      AllowedOAuthFlowsUserPoolClient: true
+      SupportedIdentityProviders:
+        - COGNITO
+        - Google
+      CallbackURLs:
+        - !Sub "https://${WebsiteDomain1}/callback"
+        - !Sub "https://${WebsiteDomain2}/callback"
+        - "http://localhost:5173/callback"
+      LogoutURLs:
+        - !Sub "https://${WebsiteDomain1}/"
+        - !Sub "https://${WebsiteDomain2}/"
+        - "http://localhost:5173/"
+      ExplicitAuthFlows:
+        - ALLOW_USER_SRP_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+
+  UserPoolDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    Properties:
+      Domain: !Ref AuthDomain
+      UserPoolId: !Ref UserPool
+      CustomDomainConfig:
+        CertificateArn: !Ref CertificateArn
+
+  HttpApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      CorsConfiguration:
+        AllowOrigins:
+          - !Sub "https://${WebsiteDomain1}"
+          - !Sub "https://${WebsiteDomain2}"
+          - "http://localhost:5173"
+        AllowHeaders:
+          - authorization
+          - content-type
+        AllowMethods:
+          - GET
+          - PUT
+          - POST
+          - OPTIONS
+      Auth:
+        Authorizers:
+          CognitoAuthorizer:
+            JwtConfiguration:
+              issuer: !Sub "https://cognito-idp.${AWS::Region}.amazonaws.com/${UserPool}"
+              audience:
+                - !Ref UserPoolClient
+            IdentitySource: "$request.header.Authorization"
+
+  ApiFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: "es2020"
+        Sourcemap: false
+        EntryPoints:
+          - src/handler.ts
+    Properties:
+      CodeUri: ../backend
+      Handler: src/handler.handler
+      Runtime: nodejs24.x
+      Timeout: 10
+      MemorySize: 256
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref ShowsTable
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ShowsTable
+        - Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:TransactWriteItems
+                - dynamodb:TransactGetItems
+              Resource:
+                - !GetAtt ShowsTable.Arn
+      Events:
+        GetShows:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /shows
+            Method: GET
+        GetMyStatuses:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /me/statuses
+            Method: GET
+            Auth:
+              Authorizer: CognitoAuthorizer
+        PutMyStatus:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /me/statuses/{showId}
+            Method: PUT
+            Auth:
+              Authorizer: CognitoAuthorizer
+        ListUsers:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /users
+            Method: GET
+            Auth:
+              Authorizer: CognitoAuthorizer
+        GetUserStatuses:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /users/{userId}/statuses
+            Method: GET
+            Auth:
+              Authorizer: CognitoAuthorizer
+        Compare:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /compare/{userId}
+            Method: GET
+            Auth:
+              Authorizer: CognitoAuthorizer
+
+  ApiDomainName:
+    Type: AWS::ApiGatewayV2::DomainName
+    Properties:
+      DomainName: !Ref ApiDomain
+      DomainNameConfigurations:
+        - CertificateArn: !Ref CertificateArn
+          EndpointType: REGIONAL
+
+  ApiMapping:
+    Type: AWS::ApiGatewayV2::ApiMapping
+    Properties:
+      ApiId: !Ref HttpApi
+      DomainName: !Ref ApiDomainName
+      Stage: "$default"
+
+  FrontendBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "nyt100-frontend-${AWS::AccountId}"
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+  CloudFrontOAC:
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+      OriginAccessControlConfig:
+        Name: !Sub "${AWS::StackName}-oac"
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
+
+  Distribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        DefaultRootObject: index.html
+        Aliases:
+          - !Ref WebsiteDomain1
+          - !Ref WebsiteDomain2
+        ViewerCertificate:
+          AcmCertificateArn: !Ref CertificateArn
+          SslSupportMethod: sni-only
+          MinimumProtocolVersion: TLSv1.2_2021
+        Origins:
+          - Id: S3Origin
+            DomainName: !GetAtt FrontendBucket.RegionalDomainName
+            S3OriginConfig:
+              OriginAccessIdentity: ""
+            OriginAccessControlId: !GetAtt CloudFrontOAC.Id
+        DefaultCacheBehavior:
+          TargetOriginId: S3Origin
+          ViewerProtocolPolicy: redirect-to-https
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6 # Managed-CachingOptimized
+          Compress: true
+        CustomErrorResponses:
+          - ErrorCode: 403
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+          - ErrorCode: 404
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+
+  FrontendBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref FrontendBucket
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: cloudfront.amazonaws.com
+            Action: s3:GetObject
+            Resource: !Sub "${FrontendBucket.Arn}/*"
+            Condition:
+              StringEquals:
+                AWS:SourceArn: !Sub "arn:aws:cloudfront::${AWS::AccountId}:distribution/${Distribution}"
+
+Outputs:
+  TableName:
+    Value: !Ref ShowsTable
+  UserPoolId:
+    Value: !Ref UserPool
+  UserPoolClientId:
+    Value: !Ref UserPoolClient
+  CognitoDomain:
+    Value: !Ref AuthDomain
+  HttpApiUrl:
+    Value: !Sub "https://${HttpApi}.execute-api.${AWS::Region}.amazonaws.com"
+  ApiCustomDomain:
+    Value: !Ref ApiDomain
+  ApiRegionalDomainName:
+    Value: !GetAtt ApiDomainName.RegionalDomainName
+  DistributionId:
+    Value: !Ref Distribution
+  DistributionDomainName:
+    Value: !GetAtt Distribution.DomainName
+  FrontendBucketName:
+    Value: !Ref FrontendBucket

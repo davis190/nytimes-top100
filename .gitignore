@@ -1,0 +1,13 @@
+node_modules/
+dist/
+build/
+.aws-sam/
+.env
+.env.*
+*.tsbuildinfo
+client_secret_*.json
+*.pem
+*.key
+
+# Not ready to publish yet
+SPEC.md

@@ -1,0 +1,702 @@
+[
+  {
+    "id": "breaking-bad",
+    "nytRank": 1,
+    "title": "Breaking Bad",
+    "yearStart": 2008,
+    "yearEnd": 2013
+  },
+  {
+    "id": "the-wire",
+    "nytRank": 2,
+    "title": "The Wire",
+    "yearStart": 2002,
+    "yearEnd": 2008
+  },
+  {
+    "id": "mad-men",
+    "nytRank": 3,
+    "title": "Mad Men",
+    "yearStart": 2007,
+    "yearEnd": 2015
+  },
+  {
+    "id": "succession",
+    "nytRank": 4,
+    "title": "Succession",
+    "yearStart": 2018,
+    "yearEnd": 2023
+  },
+  {
+    "id": "fleabag",
+    "nytRank": 5,
+    "title": "Fleabag",
+    "yearStart": 2016,
+    "yearEnd": 2019
+  },
+  {
+    "id": "game-of-thrones",
+    "nytRank": 6,
+    "title": "Game of Thrones",
+    "yearStart": 2011,
+    "yearEnd": 2019
+  },
+  {
+    "id": "veep",
+    "nytRank": 7,
+    "title": "Veep",
+    "yearStart": 2012,
+    "yearEnd": 2019
+  },
+  {
+    "id": "30-rock",
+    "nytRank": 8,
+    "title": "30 Rock",
+    "yearStart": 2006,
+    "yearEnd": 2013
+  },
+  {
+    "id": "curb-your-enthusiasm",
+    "nytRank": 9,
+    "title": "Curb Your Enthusiasm",
+    "yearStart": 2000,
+    "yearEnd": 2024
+  },
+  {
+    "id": "atlanta",
+    "nytRank": 10,
+    "title": "Atlanta",
+    "yearStart": 2016,
+    "yearEnd": 2022
+  },
+  {
+    "id": "the-office-u-s",
+    "nytRank": 11,
+    "title": "The Office (U.S.)",
+    "yearStart": 2005,
+    "yearEnd": 2013
+  },
+  {
+    "id": "arrested-development",
+    "nytRank": 12,
+    "title": "Arrested Development",
+    "yearStart": 2003,
+    "yearEnd": 2019
+  },
+  {
+    "id": "girls",
+    "nytRank": 13,
+    "title": "Girls",
+    "yearStart": 2012,
+    "yearEnd": 2017
+  },
+  {
+    "id": "friday-night-lights",
+    "nytRank": 14,
+    "title": "Friday Night Lights",
+    "yearStart": 2006,
+    "yearEnd": 2011
+  },
+  {
+    "id": "six-feet-under",
+    "nytRank": 15,
+    "title": "Six Feet Under",
+    "yearStart": 2001,
+    "yearEnd": 2005
+  },
+  {
+    "id": "the-office-u-k",
+    "nytRank": 16,
+    "title": "The Office (U.K.)",
+    "yearStart": 2001,
+    "yearEnd": 2003
+  },
+  {
+    "id": "the-americans",
+    "nytRank": 17,
+    "title": "The Americans",
+    "yearStart": 2013,
+    "yearEnd": 2018
+  },
+  {
+    "id": "i-may-destroy-you",
+    "nytRank": 18,
+    "title": "I May Destroy You",
+    "yearStart": 2020,
+    "yearEnd": 2020
+  },
+  {
+    "id": "chernobyl",
+    "nytRank": 19,
+    "title": "Chernobyl",
+    "yearStart": 2019,
+    "yearEnd": 2019
+  },
+  {
+    "id": "the-crown",
+    "nytRank": 20,
+    "title": "The Crown",
+    "yearStart": 2016,
+    "yearEnd": 2023
+  },
+  {
+    "id": "the-white-lotus",
+    "nytRank": 21,
+    "title": "The White Lotus",
+    "yearStart": 2021,
+    "yearEnd": null
+  },
+  {
+    "id": "lost",
+    "nytRank": 22,
+    "title": "Lost",
+    "yearStart": 2004,
+    "yearEnd": 2010
+  },
+  {
+    "id": "the-comeback",
+    "nytRank": 23,
+    "title": "The Comeback",
+    "yearStart": 2005,
+    "yearEnd": 2014
+  },
+  {
+    "id": "deadwood",
+    "nytRank": 24,
+    "title": "Deadwood",
+    "yearStart": 2004,
+    "yearEnd": 2006
+  },
+  {
+    "id": "the-leftovers",
+    "nytRank": 25,
+    "title": "The Leftovers",
+    "yearStart": 2014,
+    "yearEnd": 2017
+  },
+  {
+    "id": "black-mirror",
+    "nytRank": 26,
+    "title": "Black Mirror",
+    "yearStart": 2011,
+    "yearEnd": null
+  },
+  {
+    "id": "better-call-saul",
+    "nytRank": 27,
+    "title": "Better Call Saul",
+    "yearStart": 2015,
+    "yearEnd": 2022
+  },
+  {
+    "id": "band-of-brothers",
+    "nytRank": 28,
+    "title": "Band of Brothers",
+    "yearStart": 2001,
+    "yearEnd": 2001
+  },
+  {
+    "id": "key-and-peele",
+    "nytRank": 29,
+    "title": "Key & Peele",
+    "yearStart": 2012,
+    "yearEnd": 2015
+  },
+  {
+    "id": "severance",
+    "nytRank": 30,
+    "title": "Severance",
+    "yearStart": 2022,
+    "yearEnd": null
+  },
+  {
+    "id": "survivor",
+    "nytRank": 31,
+    "title": "Survivor",
+    "yearStart": 2000,
+    "yearEnd": null
+  },
+  {
+    "id": "andor",
+    "nytRank": 32,
+    "title": "Andor",
+    "yearStart": 2022,
+    "yearEnd": 2025
+  },
+  {
+    "id": "enlightened",
+    "nytRank": 33,
+    "title": "Enlightened",
+    "yearStart": 2011,
+    "yearEnd": 2013
+  },
+  {
+    "id": "schitt-s-creek",
+    "nytRank": 34,
+    "title": "Schitt's Creek",
+    "yearStart": 2015,
+    "yearEnd": 2020
+  },
+  {
+    "id": "true-detective-season-1",
+    "nytRank": 35,
+    "title": "True Detective (Season 1)",
+    "yearStart": 2014,
+    "yearEnd": 2014
+  },
+  {
+    "id": "the-pitt",
+    "nytRank": 36,
+    "title": "The Pitt",
+    "yearStart": 2025,
+    "yearEnd": null
+  },
+  {
+    "id": "battlestar-galactica",
+    "nytRank": 37,
+    "title": "Battlestar Galactica",
+    "yearStart": 2005,
+    "yearEnd": 2009
+  },
+  {
+    "id": "homeland",
+    "nytRank": 38,
+    "title": "Homeland",
+    "yearStart": 2011,
+    "yearEnd": 2020
+  },
+  {
+    "id": "watchmen",
+    "nytRank": 39,
+    "title": "Watchmen",
+    "yearStart": 2019,
+    "yearEnd": 2019
+  },
+  {
+    "id": "adolescence",
+    "nytRank": 40,
+    "title": "Adolescence",
+    "yearStart": 2025,
+    "yearEnd": 2025
+  },
+  {
+    "id": "louie",
+    "nytRank": 41,
+    "title": "Louie",
+    "yearStart": 2010,
+    "yearEnd": 2015
+  },
+  {
+    "id": "hacks",
+    "nytRank": 42,
+    "title": "Hacks",
+    "yearStart": 2021,
+    "yearEnd": 2025
+  },
+  {
+    "id": "peaky-blinders",
+    "nytRank": 43,
+    "title": "Peaky Blinders",
+    "yearStart": 2013,
+    "yearEnd": 2022
+  },
+  {
+    "id": "bojack-horseman",
+    "nytRank": 44,
+    "title": "BoJack Horseman",
+    "yearStart": 2014,
+    "yearEnd": 2020
+  },
+  {
+    "id": "happy-valley",
+    "nytRank": 45,
+    "title": "Happy Valley",
+    "yearStart": 2014,
+    "yearEnd": 2023
+  },
+  {
+    "id": "broad-city",
+    "nytRank": 46,
+    "title": "Broad City",
+    "yearStart": 2014,
+    "yearEnd": 2019
+  },
+  {
+    "id": "twin-peaks-the-return",
+    "nytRank": 47,
+    "title": "Twin Peaks: The Return",
+    "yearStart": 2017,
+    "yearEnd": 2017
+  },
+  {
+    "id": "house-of-cards",
+    "nytRank": 48,
+    "title": "House of Cards",
+    "yearStart": 2013,
+    "yearEnd": 2018
+  },
+  {
+    "id": "normal-people",
+    "nytRank": 49,
+    "title": "Normal People",
+    "yearStart": 2020,
+    "yearEnd": 2020
+  },
+  {
+    "id": "parks-and-recreation",
+    "nytRank": 50,
+    "title": "Parks and Recreation",
+    "yearStart": 2009,
+    "yearEnd": 2015
+  },
+  {
+    "id": "the-good-place",
+    "nytRank": 51,
+    "title": "The Good Place",
+    "yearStart": 2016,
+    "yearEnd": 2020
+  },
+  {
+    "id": "downton-abbey",
+    "nytRank": 52,
+    "title": "Downton Abbey",
+    "yearStart": 2010,
+    "yearEnd": 2015
+  },
+  {
+    "id": "stranger-things",
+    "nytRank": 53,
+    "title": "Stranger Things",
+    "yearStart": 2016,
+    "yearEnd": 2025
+  },
+  {
+    "id": "the-bureau",
+    "nytRank": 54,
+    "title": "The Bureau",
+    "yearStart": 2015,
+    "yearEnd": 2020
+  },
+  {
+    "id": "insecure",
+    "nytRank": 55,
+    "title": "Insecure",
+    "yearStart": 2016,
+    "yearEnd": 2021
+  },
+  {
+    "id": "nathan-for-you",
+    "nytRank": 56,
+    "title": "Nathan for You",
+    "yearStart": 2013,
+    "yearEnd": 2017
+  },
+  {
+    "id": "i-think-you-should-leave",
+    "nytRank": 57,
+    "title": "I Think You Should Leave",
+    "yearStart": 2019,
+    "yearEnd": null
+  },
+  {
+    "id": "chappelle-s-show",
+    "nytRank": 58,
+    "title": "Chappelle's Show",
+    "yearStart": 2003,
+    "yearEnd": 2006
+  },
+  {
+    "id": "pen15",
+    "nytRank": 59,
+    "title": "PEN15",
+    "yearStart": 2019,
+    "yearEnd": 2021
+  },
+  {
+    "id": "peep-show",
+    "nytRank": 60,
+    "title": "Peep Show",
+    "yearStart": 2003,
+    "yearEnd": 2015
+  },
+  {
+    "id": "rupaul-s-drag-race",
+    "nytRank": 61,
+    "title": "RuPaul's Drag Race",
+    "yearStart": 2009,
+    "yearEnd": null
+  },
+  {
+    "id": "slow-horses",
+    "nytRank": 62,
+    "title": "Slow Horses",
+    "yearStart": 2022,
+    "yearEnd": null
+  },
+  {
+    "id": "the-thick-of-it",
+    "nytRank": 63,
+    "title": "The Thick of It",
+    "yearStart": 2005,
+    "yearEnd": 2012
+  },
+  {
+    "id": "anthony-bourdain-parts-unknown",
+    "nytRank": 64,
+    "title": "Anthony Bourdain: Parts Unknown",
+    "yearStart": 2013,
+    "yearEnd": 2018
+  },
+  {
+    "id": "mare-of-easttown",
+    "nytRank": 65,
+    "title": "Mare of Easttown",
+    "yearStart": 2021,
+    "yearEnd": 2021
+  },
+  {
+    "id": "the-rehearsal",
+    "nytRank": 66,
+    "title": "The Rehearsal",
+    "yearStart": 2022,
+    "yearEnd": null
+  },
+  {
+    "id": "the-handmaid-s-tale",
+    "nytRank": 67,
+    "title": "The Handmaid's Tale",
+    "yearStart": 2017,
+    "yearEnd": 2025
+  },
+  {
+    "id": "ozark",
+    "nytRank": 68,
+    "title": "Ozark",
+    "yearStart": 2017,
+    "yearEnd": 2022
+  },
+  {
+    "id": "anthony-bourdain-no-reservations",
+    "nytRank": 69,
+    "title": "Anthony Bourdain: No Reservations",
+    "yearStart": 2005,
+    "yearEnd": 2012
+  },
+  {
+    "id": "the-shield",
+    "nytRank": 70,
+    "title": "The Shield",
+    "yearStart": 2002,
+    "yearEnd": 2008
+  },
+  {
+    "id": "beef-season-1",
+    "nytRank": 71,
+    "title": "Beef (Season 1)",
+    "yearStart": 2023,
+    "yearEnd": 2023
+  },
+  {
+    "id": "squid-game",
+    "nytRank": 72,
+    "title": "Squid Game",
+    "yearStart": 2021,
+    "yearEnd": 2025
+  },
+  {
+    "id": "barry",
+    "nytRank": 73,
+    "title": "Barry",
+    "yearStart": 2018,
+    "yearEnd": 2023
+  },
+  {
+    "id": "the-bear",
+    "nytRank": 74,
+    "title": "The Bear",
+    "yearStart": 2022,
+    "yearEnd": 2026
+  },
+  {
+    "id": "ted-lasso",
+    "nytRank": 75,
+    "title": "Ted Lasso",
+    "yearStart": 2020,
+    "yearEnd": null
+  },
+  {
+    "id": "somebody-somewhere",
+    "nytRank": 76,
+    "title": "Somebody Somewhere",
+    "yearStart": 2022,
+    "yearEnd": 2024
+  },
+  {
+    "id": "modern-family",
+    "nytRank": 77,
+    "title": "Modern Family",
+    "yearStart": 2009,
+    "yearEnd": 2020
+  },
+  {
+    "id": "it-s-always-sunny-in-philadelphia",
+    "nytRank": 78,
+    "title": "It's Always Sunny in Philadelphia",
+    "yearStart": 2005,
+    "yearEnd": null
+  },
+  {
+    "id": "the-good-wife",
+    "nytRank": 79,
+    "title": "The Good Wife",
+    "yearStart": 2009,
+    "yearEnd": 2016
+  },
+  {
+    "id": "how-to-with-john-wilson",
+    "nytRank": 80,
+    "title": "How To With John Wilson",
+    "yearStart": 2020,
+    "yearEnd": 2023
+  },
+  {
+    "id": "the-queen-s-gambit",
+    "nytRank": 81,
+    "title": "The Queen's Gambit",
+    "yearStart": 2020,
+    "yearEnd": 2020
+  },
+  {
+    "id": "better-things",
+    "nytRank": 82,
+    "title": "Better Things",
+    "yearStart": 2016,
+    "yearEnd": 2022
+  },
+  {
+    "id": "justified",
+    "nytRank": 83,
+    "title": "Justified",
+    "yearStart": 2010,
+    "yearEnd": 2015
+  },
+  {
+    "id": "planet-earth",
+    "nytRank": 84,
+    "title": "Planet Earth",
+    "yearStart": 2006,
+    "yearEnd": 2006
+  },
+  {
+    "id": "the-great-british-baking-show",
+    "nytRank": 85,
+    "title": "The Great British Baking Show",
+    "yearStart": 2010,
+    "yearEnd": null
+  },
+  {
+    "id": "shogun",
+    "nytRank": 86,
+    "title": "Shogun",
+    "yearStart": 2024,
+    "yearEnd": null
+  },
+  {
+    "id": "reservation-dogs",
+    "nytRank": 87,
+    "title": "Reservation Dogs",
+    "yearStart": 2021,
+    "yearEnd": 2023
+  },
+  {
+    "id": "dexter",
+    "nytRank": 88,
+    "title": "Dexter",
+    "yearStart": 2006,
+    "yearEnd": 2013
+  },
+  {
+    "id": "baby-reindeer",
+    "nytRank": 89,
+    "title": "Baby Reindeer",
+    "yearStart": 2024,
+    "yearEnd": 2024
+  },
+  {
+    "id": "eastbound-and-down",
+    "nytRank": 90,
+    "title": "Eastbound & Down",
+    "yearStart": 2009,
+    "yearEnd": 2013
+  },
+  {
+    "id": "catastrophe",
+    "nytRank": 91,
+    "title": "Catastrophe",
+    "yearStart": 2015,
+    "yearEnd": 2019
+  },
+  {
+    "id": "the-night-of",
+    "nytRank": 92,
+    "title": "The Night Of",
+    "yearStart": 2016,
+    "yearEnd": 2016
+  },
+  {
+    "id": "station-eleven",
+    "nytRank": 93,
+    "title": "Station Eleven",
+    "yearStart": 2021,
+    "yearEnd": 2022
+  },
+  {
+    "id": "the-diplomat",
+    "nytRank": 94,
+    "title": "The Diplomat",
+    "yearStart": 2023,
+    "yearEnd": null
+  },
+  {
+    "id": "house",
+    "nytRank": 95,
+    "title": "House",
+    "yearStart": 2004,
+    "yearEnd": 2012
+  },
+  {
+    "id": "halt-and-catch-fire",
+    "nytRank": 96,
+    "title": "Halt and Catch Fire",
+    "yearStart": 2014,
+    "yearEnd": 2017
+  },
+  {
+    "id": "community",
+    "nytRank": 97,
+    "title": "Community",
+    "yearStart": 2009,
+    "yearEnd": 2015
+  },
+  {
+    "id": "the-oa",
+    "nytRank": 98,
+    "title": "The OA",
+    "yearStart": 2016,
+    "yearEnd": 2019
+  },
+  {
+    "id": "gilmore-girls",
+    "nytRank": 99,
+    "title": "Gilmore Girls",
+    "yearStart": 2000,
+    "yearEnd": 2007
+  },
+  {
+    "id": "scandal",
+    "nytRank": 100,
+    "title": "Scandal",
+    "yearStart": 2012,
+    "yearEnd": 2018
+  }
+]

@@ -1,0 +1,32 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 24
+    commands:
+      - pip install --upgrade aws-sam-cli
+  pre_build:
+    commands:
+      - (cd backend && npm install)
+      - (cd scripts && npm install)
+  build:
+    commands:
+      - (cd infra && sam build --template app.yaml)
+  post_build:
+    commands:
+      - >
+        (cd infra && sam deploy
+        --stack-name "$APP_STACK_NAME"
+        --resolve-s3
+        --capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND
+        --no-confirm-changeset
+        --no-fail-on-empty-changeset
+        --parameter-overrides
+        CertificateArn="$CERTIFICATE_ARN"
+        GoogleSecretName="$GOOGLE_SECRET_NAME"
+        WebsiteDomain1="$WEBSITE_DOMAIN_1"
+        WebsiteDomain2="$WEBSITE_DOMAIN_2"
+        ApiDomain="$API_DOMAIN"
+        AuthDomain="$AUTH_DOMAIN")
+      - node scripts/seed-shows.mjs "$APP_STACK_NAME"

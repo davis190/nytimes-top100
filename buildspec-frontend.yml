@@ -1,0 +1,28 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 24
+  pre_build:
+    commands:
+      - |
+        USER_POOL_CLIENT_ID=$(aws cloudformation describe-stacks --stack-name "$APP_STACK_NAME" --query "Stacks[0].Outputs[?OutputKey=='UserPoolClientId'].OutputValue" --output text)
+        FRONTEND_BUCKET=$(aws cloudformation describe-stacks --stack-name "$APP_STACK_NAME" --query "Stacks[0].Outputs[?OutputKey=='FrontendBucketName'].OutputValue" --output text)
+        DISTRIBUTION_ID=$(aws cloudformation describe-stacks --stack-name "$APP_STACK_NAME" --query "Stacks[0].Outputs[?OutputKey=='DistributionId'].OutputValue" --output text)
+        echo "VITE_API_URL=https://$API_DOMAIN" > frontend/.env.production
+        echo "VITE_COGNITO_DOMAIN=https://$AUTH_DOMAIN" >> frontend/.env.production
+        echo "VITE_COGNITO_CLIENT_ID=$USER_POOL_CLIENT_ID" >> frontend/.env.production
+        echo "$FRONTEND_BUCKET" > /tmp/frontend_bucket.txt
+        echo "$DISTRIBUTION_ID" > /tmp/distribution_id.txt
+      - (cd frontend && npm install)
+  build:
+    commands:
+      - (cd frontend && npm run build)
+  post_build:
+    commands:
+      - |
+        FRONTEND_BUCKET=$(cat /tmp/frontend_bucket.txt)
+        DISTRIBUTION_ID=$(cat /tmp/distribution_id.txt)
+        aws s3 sync frontend/dist "s3://$FRONTEND_BUCKET" --delete
+        aws cloudfront create-invalidation --distribution-id "$DISTRIBUTION_ID" --paths "/*"
