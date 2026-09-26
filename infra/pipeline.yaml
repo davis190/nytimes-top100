@@ -32,6 +32,10 @@ Parameters:
   AuthDomain:
     Type: String
     Default: auth.nyt100.claytondavis.dev
+  EnableAuthDomain:
+    Type: String
+    AllowedValues: ["true", "false"]
+    Default: "false"
 
 Resources:
   ArtifactBucket:
@@ -114,6 +118,7 @@ Resources:
           - { Name: WEBSITE_DOMAIN_2, Value: !Ref WebsiteDomain2 }
           - { Name: API_DOMAIN, Value: !Ref ApiDomain }
           - { Name: AUTH_DOMAIN, Value: !Ref AuthDomain }
+          - { Name: ENABLE_AUTH_DOMAIN, Value: !Ref EnableAuthDomain }
       Source:
         Type: CODEPIPELINE
         BuildSpec: buildspec-backend.yml

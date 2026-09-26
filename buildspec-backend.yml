@@ -28,5 +28,6 @@ phases:
         WebsiteDomain1="$WEBSITE_DOMAIN_1"
         WebsiteDomain2="$WEBSITE_DOMAIN_2"
         ApiDomain="$API_DOMAIN"
-        AuthDomain="$AUTH_DOMAIN")
+        AuthDomain="$AUTH_DOMAIN"
+        EnableAuthDomain="$ENABLE_AUTH_DOMAIN")
       - node scripts/seed-shows.mjs "$APP_STACK_NAME"

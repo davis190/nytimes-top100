@@ -22,6 +22,17 @@ Parameters:
   AuthDomain:
     Type: String
     Default: auth.nyt100.claytondavis.dev
+  EnableAuthDomain:
+    Type: String
+    AllowedValues: ["true", "false"]
+    Default: "false"
+    Description: >
+      Cognito requires the custom domain's parent (nyt100.claytondavis.dev) to already resolve via
+      DNS before it will create the Hosted UI custom domain. Leave false on the first deploy (before
+      DNS is pointed at this stack's outputs), then flip to true once nyt100.claytondavis.dev resolves.
+
+Conditions:
+  CreateAuthDomain: !Equals [!Ref EnableAuthDomain, "true"]
 
 Resources:
   ShowsTable:
@@ -120,6 +131,7 @@ Resources:
 
   UserPoolDomain:
     Type: AWS::Cognito::UserPoolDomain
+    Condition: CreateAuthDomain
     Properties:
       Domain: !Ref AuthDomain
       UserPoolId: !Ref UserPool
