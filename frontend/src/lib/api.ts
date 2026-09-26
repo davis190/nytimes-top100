@@ -1,4 +1,5 @@
 import { getIdToken } from "./auth";
+import type { ShowStatus } from "./types";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -18,7 +19,7 @@ async function request(path: string, options: RequestInit = {}) {
 export const api = {
   listShows: () => request("/shows"),
   getMyStatuses: () => request("/me/statuses"),
-  setStatus: (showId: string, status: string) =>
+  setStatus: (showId: string, status: ShowStatus) =>
     request(`/me/statuses/${encodeURIComponent(showId)}`, {
       method: "PUT",
       body: JSON.stringify({ status }),

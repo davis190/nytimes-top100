@@ -13,7 +13,9 @@ export default function App() {
   return (
     <div className="app">
       <header className="nav">
-        <div className="brand">NYT Top 100</div>
+        <div className="brand">
+          <span className="brand__mark">TOP</span> 100
+        </div>
         {loggedIn && (
           <nav>
             <Link to="/">Shows</Link>
@@ -24,10 +26,14 @@ export default function App() {
           {loggedIn ? (
             <>
               <span className="email">{claims?.email}</span>
-              <button onClick={logout}>Log out</button>
+              <button className="btn btn--outline btn--small" onClick={logout}>
+                Log out
+              </button>
             </>
           ) : (
-            <button onClick={() => login()}>Sign in</button>
+            <button className="btn" onClick={() => login()}>
+              Sign in
+            </button>
           )}
         </div>
       </header>
@@ -46,6 +52,17 @@ export default function App() {
           )}
         </Routes>
       </main>
+      <footer className="site-footer">
+        Show data and images from{" "}
+        <a href="https://www.themoviedb.org/" target="_blank" rel="noreferrer">
+          TMDb
+        </a>
+        . Streaming availability from{" "}
+        <a href="https://www.justwatch.com/" target="_blank" rel="noreferrer">
+          JustWatch
+        </a>
+        . This product uses the TMDb API but is not endorsed or certified by TMDb.
+      </footer>
     </div>
   );
 }
@@ -53,9 +70,13 @@ export default function App() {
 function Landing() {
   return (
     <div className="landing">
-      <h1>Track your NYT Top 100 shows</h1>
-      <p>Sign in to tag shows and compare your list with others.</p>
-      <button onClick={() => login()}>Sign in</button>
+      <h1>
+        Track your <span className="landing__accent">NYT Top 100</span> shows
+      </h1>
+      <p>Tag every show, see what's trending among friends, and find out where to watch next.</p>
+      <button className="btn btn--large" onClick={() => login()}>
+        Sign in to get started
+      </button>
     </div>
   );
 }

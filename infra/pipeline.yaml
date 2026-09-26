@@ -20,6 +20,9 @@ Parameters:
   GoogleSecretName:
     Type: String
     Default: nyt100/google-oauth
+  TmdbSecretName:
+    Type: String
+    Default: nyt100/tmdb
   WebsiteDomain1:
     Type: String
     Default: nytimes-top100.claytondavis.dev
@@ -114,6 +117,7 @@ Resources:
           - { Name: APP_STACK_NAME, Value: !Ref AppStackName }
           - { Name: CERTIFICATE_ARN, Value: !Ref CertificateArn }
           - { Name: GOOGLE_SECRET_NAME, Value: !Ref GoogleSecretName }
+          - { Name: TMDB_SECRET_NAME, Value: !Ref TmdbSecretName }
           - { Name: WEBSITE_DOMAIN_1, Value: !Ref WebsiteDomain1 }
           - { Name: WEBSITE_DOMAIN_2, Value: !Ref WebsiteDomain2 }
           - { Name: API_DOMAIN, Value: !Ref ApiDomain }
@@ -193,6 +197,35 @@ Resources:
                 - Name: SourceOutput
               OutputArtifacts:
                 - Name: FrontendOutput
+
+  MonthlyRefreshRuleRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: { Service: events.amazonaws.com }
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: start-pipeline
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: codepipeline:StartPipelineExecution
+                Resource: !Sub "arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:${Pipeline}"
+
+  MonthlyRefreshRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Description: Re-runs the pipeline monthly to refresh show metadata (posters, watch providers) from TMDb
+      ScheduleExpression: "cron(0 9 1 * ? *)"
+      State: ENABLED
+      Targets:
+        - Id: TriggerPipeline
+          Arn: !Sub "arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:${Pipeline}"
+          RoleArn: !GetAtt MonthlyRefreshRuleRole.Arn
 
 Outputs:
   PipelineName:

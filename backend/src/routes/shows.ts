@@ -19,6 +19,14 @@ export async function listShows() {
     title: item.title,
     yearStart: item.yearStart,
     yearEnd: item.yearEnd ?? null,
+    overview: item.overview ?? null,
+    genres: item.genres ?? [],
+    network: item.network ?? null,
+    posterUrl: item.posterUrl ?? null,
+    backdropUrl: item.backdropUrl ?? null,
+    imdbId: item.imdbId ?? null,
+    watchProviders: item.watchProviders ?? null,
+    enrichedAt: item.enrichedAt ?? null,
   }));
 
   return json(200, { shows });

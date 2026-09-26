@@ -31,3 +31,4 @@ phases:
         AuthDomain="$AUTH_DOMAIN"
         EnableAuthDomain="$ENABLE_AUTH_DOMAIN")
       - node scripts/seed-shows.mjs "$APP_STACK_NAME"
+      - node scripts/enrich-shows.mjs "$APP_STACK_NAME"

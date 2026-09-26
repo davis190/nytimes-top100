@@ -33,19 +33,28 @@ export default function Leaderboard() {
         </tr>
       </thead>
       <tbody>
-        {users.map((u) => (
-          <tr key={u.userId}>
-            <td>
-              {u.displayName}
-              {u.userId === me?.sub ? " (you)" : ""}
-            </td>
-            <td>{u.seenItCount}</td>
-            <td>{u.seenPartCount}</td>
-            <td>{u.interestedCount}</td>
-            <td>{u.notInterestedCount}</td>
-            <td>{u.userId !== me?.sub && <Link to={`/compare/${u.userId}`}>Compare</Link>}</td>
-          </tr>
-        ))}
+        {users.map((u) => {
+          const isMe = u.userId === me?.sub;
+          return (
+            <tr key={u.userId} className={isMe ? "leaderboard__row--me" : undefined}>
+              <td>
+                {u.displayName}
+                {isMe && <span className="leaderboard__you-badge">you</span>}
+              </td>
+              <td>{u.seenItCount}</td>
+              <td>{u.seenPartCount}</td>
+              <td>{u.interestedCount}</td>
+              <td>{u.notInterestedCount}</td>
+              <td>
+                {!isMe && (
+                  <Link className="btn btn--outline btn--small" to={`/compare/${u.userId}`}>
+                    Compare
+                  </Link>
+                )}
+              </td>
+            </tr>
+          );
+        })}
       </tbody>
     </table>
   );
