@@ -659,14 +659,9 @@ input:focus {
 
 /* ---------- Tables (leaderboard / compare / show table) ---------- */
 
-.table-wrap {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  border-radius: var(--radius);
-}
-
 table {
   width: 100%;
+  table-layout: fixed;
   border-collapse: collapse;
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -680,6 +675,7 @@ td {
   padding: 0.6rem 0.85rem;
   border-bottom: 1px solid var(--border);
   font-size: 0.88rem;
+  word-break: break-word;
 }
 
 th {
@@ -699,8 +695,8 @@ tbody tr:hover {
   background: var(--bg-hover);
 }
 
-.leaderboard {
-  min-width: 520px;
+.leaderboard__name {
+  font-weight: 600;
 }
 
 .leaderboard__row--me {
@@ -715,6 +711,18 @@ tbody tr:hover {
   border: 1px solid var(--accent);
   border-radius: 999px;
   padding: 0.05rem 0.4rem;
+  white-space: nowrap;
+}
+
+.leaderboard__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.leaderboard th:last-child,
+.leaderboard td:last-child {
+  width: 6rem;
 }
 
 .compare__summary {
@@ -722,60 +730,50 @@ tbody tr:hover {
   margin-bottom: 1rem;
 }
 
-.compare-table {
-  min-width: 480px;
+.compare-table th:first-child,
+.compare-table td:first-child {
+  width: 2.2rem;
+}
+
+.compare-table th:nth-child(3),
+.compare-table td:nth-child(3),
+.compare-table th:nth-child(4),
+.compare-table td:nth-child(4) {
+  width: 22%;
 }
 
 .compare-table__rank {
   color: var(--text-faint);
-  width: 2rem;
-}
-
-.compare-table__title {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-}
-
-.compare-table__thumb {
-  width: 28px;
-  height: 42px;
-  object-fit: cover;
-  border-radius: 4px;
-  flex-shrink: 0;
-}
-
-.show-table {
-  min-width: 560px;
 }
 
 .show-table tbody tr {
   cursor: pointer;
 }
 
+.show-table th:first-child,
+.show-table td:first-child {
+  width: 2.2rem;
+}
+
+.show-table th:last-child,
+.show-table td:last-child {
+  width: 40%;
+}
+
 .show-table__rank {
   color: var(--text-faint);
-  width: 2rem;
 }
 
 .show-table__title {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
   font-weight: 600;
 }
 
-.show-table__thumb {
-  width: 32px;
-  height: 48px;
-  object-fit: cover;
-  border-radius: 4px;
-  flex-shrink: 0;
-  background: var(--bg-elevated);
-}
-
 .show-table__meta {
-  color: var(--text-muted);
+  display: block;
+  color: var(--text-faint);
+  font-weight: 400;
+  font-size: 0.78rem;
+  margin-top: 0.15rem;
 }
 
 /* ---------- Footer ---------- */
@@ -876,5 +874,26 @@ tbody tr:hover {
   .show-grid {
     grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
     gap: 0.6rem;
+  }
+
+  th,
+  td {
+    padding: 0.5rem 0.4rem;
+    font-size: 0.8rem;
+  }
+
+  .status-badge {
+    padding: 0.2rem 0.4rem;
+    font-size: 0.68rem;
+  }
+
+  .leaderboard .btn--small {
+    padding: 0.3rem 0.4rem;
+    font-size: 0.7rem;
+  }
+
+  .status-control--compact .status-pill {
+    padding: 0.2rem 0.3rem;
+    font-size: 0.58rem;
   }
 }

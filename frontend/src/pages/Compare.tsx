@@ -110,35 +110,30 @@ export default function Compare() {
       {visibleShows.length === 0 ? (
         <p className="empty-state">No shows match your filters.</p>
       ) : (
-        <div className="table-wrap">
-          <table className="compare-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Show</th>
-                <th>You</th>
-                <th>Them</th>
+        <table className="compare-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Show</th>
+              <th>You</th>
+              <th>Them</th>
+            </tr>
+          </thead>
+          <tbody>
+            {visibleShows.map((show) => (
+              <tr key={show.id}>
+                <td className="compare-table__rank">{show.nytRank}</td>
+                <td className="compare-table__title">{show.title}</td>
+                <td>
+                  <StatusBadge status={mineMap.get(show.id)} />
+                </td>
+                <td>
+                  <StatusBadge status={theirsMap.get(show.id)} />
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {visibleShows.map((show) => (
-                <tr key={show.id}>
-                  <td className="compare-table__rank">{show.nytRank}</td>
-                  <td className="compare-table__title">
-                    {show.posterUrl && <img src={show.posterUrl} alt="" className="compare-table__thumb" />}
-                    {show.title}
-                  </td>
-                  <td>
-                    <StatusBadge status={mineMap.get(show.id)} />
-                  </td>
-                  <td>
-                    <StatusBadge status={theirsMap.get(show.id)} />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
       )}
     </div>
   );
