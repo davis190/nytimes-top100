@@ -2,11 +2,24 @@ import { useEffect, useMemo, useState } from "react";
 import { api } from "../lib/api";
 import { STATUS_ORDER, STATUS_LABELS, type Show, type ShowStatus } from "../lib/types";
 import ShowCard from "../components/ShowCard";
+import ShowTable from "../components/ShowTable";
 import ShowDetailModal from "../components/ShowDetailModal";
 import ProgressBar from "../components/ProgressBar";
 
 type StatusFilter = "all" | "unranked" | ShowStatus;
 type SortBy = "rank" | "title" | "year";
+type ViewMode = "grid" | "table";
+
+const VIEW_MODE_KEY = "nyt100_view_mode";
+
+function loadViewMode(): ViewMode {
+  try {
+    const saved = localStorage.getItem(VIEW_MODE_KEY);
+    return saved === "table" ? "table" : "grid";
+  } catch {
+    return "grid";
+  }
+}
 
 export default function ShowList() {
   const [shows, setShows] = useState<Show[]>([]);
@@ -16,6 +29,16 @@ export default function ShowList() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [sortBy, setSortBy] = useState<SortBy>("rank");
   const [openShowId, setOpenShowId] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<ViewMode>(loadViewMode);
+
+  function changeViewMode(mode: ViewMode) {
+    setViewMode(mode);
+    try {
+      localStorage.setItem(VIEW_MODE_KEY, mode);
+    } catch {
+      // ignore - view preference just won't persist
+    }
+  }
 
   useEffect(() => {
     Promise.all([api.listShows(), api.getMyStatuses()]).then(([showsRes, statusesRes]) => {
@@ -68,6 +91,22 @@ export default function ShowList() {
     <div className="show-list">
       <div className="show-list__header">
         <ProgressBar seen={seenCount} total={shows.length} />
+        <div className="view-toggle">
+          <button
+            type="button"
+            className={viewMode === "grid" ? "is-active" : undefined}
+            onClick={() => changeViewMode("grid")}
+          >
+            Grid
+          </button>
+          <button
+            type="button"
+            className={viewMode === "table" ? "is-active" : undefined}
+            onClick={() => changeViewMode("table")}
+          >
+            Table
+          </button>
+        </div>
       </div>
 
       <div className="filter-bar">
@@ -96,7 +135,7 @@ export default function ShowList() {
 
       {visibleShows.length === 0 ? (
         <p className="empty-state">No shows match your filters.</p>
-      ) : (
+      ) : viewMode === "grid" ? (
         <div className="show-grid">
           {visibleShows.map((show) => (
             <ShowCard
@@ -108,6 +147,8 @@ export default function ShowList() {
             />
           ))}
         </div>
+      ) : (
+        <ShowTable shows={visibleShows} statuses={statuses} onOpen={setOpenShowId} onStatusChange={setStatus} />
       )}
 
       {openShow && (
