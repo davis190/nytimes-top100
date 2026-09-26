@@ -58,16 +58,27 @@ function searchTitle(title) {
 }
 
 async function findTmdbMatch(show) {
-  const search = await tmdbGet(`/search/tv?query=${encodeURIComponent(searchTitle(show.title))}`);
+  const query = searchTitle(show.title);
+  const search = await tmdbGet(`/search/tv?query=${encodeURIComponent(query)}`);
   const results = search.results ?? [];
   if (results.length === 0) return null;
 
-  const withYear = results.find((r) => {
-    const year = r.first_air_date ? Number(r.first_air_date.slice(0, 4)) : null;
+  const yearOf = (r) => (r.first_air_date ? Number(r.first_air_date.slice(0, 4)) : null);
+  const yearMatches = (r) => {
+    const year = yearOf(r);
     return year !== null && Math.abs(year - show.yearStart) <= 1;
-  });
+  };
+  const titleMatches = (r) => r.name.trim().toLowerCase() === query.trim().toLowerCase();
 
-  return withYear ?? results[0];
+  // Prefer an exact title match over a loose year-proximity match - a popular
+  // same-era show with a similar title (e.g. "2 Broke Girls" vs "Girls") can
+  // otherwise outrank the actual show since search results are popularity-sorted.
+  return (
+    results.find((r) => titleMatches(r) && yearMatches(r)) ??
+    results.find((r) => titleMatches(r)) ??
+    results.find((r) => yearMatches(r)) ??
+    results[0]
+  );
 }
 
 function mapProviderList(list) {
